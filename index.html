@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full bg-amber-50/30">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>針線大師：穿針打結特訓營 - 國中家政數位學習App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tiffany: {
+                            DEFAULT: '#4ECDC4',
+                            50: '#E8F8F7',
+                            100: '#D1F1EF',
+                            200: '#A3E3DF',
+                            500: '#4ECDC4',
+                            600: '#36B5AC',
+                            700: '#288E87',
+                        },
+                        warmpink: {
+                            DEFAULT: '#FF6B6B',
+                            50: '#FFF0F0',
+                            100: '#FFE1E1',
+                            400: '#FF8888',
+                            500: '#FF6B6B',
+                            600: '#E84A4A',
+                        },
+                        sunyellow: '#FFE66D',
+                        linen: '#FDFBF7'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #FDFBF7;
+            background-image: radial-gradient(#4ECDC4 0.65px, transparent 0.65px), radial-gradient(#FF6B6B 0.65px, #FDFBF7 0.65px);
+            background-size: 26px 26px;
+            background-position: 0 0, 13px 13px;
+        }
+
+        .font-playful {
+            font-family: 'Fredoka One', 'Noto Sans TC', cursive;
+        }
+
+        .stitch-border {
+            border: 3px dashed #4ECDC4;
+        }
+
+        .stitch-border-pink {
+            border: 3px dashed #FF6B6B;
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(78, 205, 196, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .pulse-gentle {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Print formatting for certificate */
+        @media print {
+            body {
+                background: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .certificate-container {
+                box-shadow: none !important;
+                border: 4px double #4ECDC4 !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-700 antialiased selection:bg-tiffany-200 selection:text-tiffany-700">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-tiffany-100 shadow-sm no-print">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-tiffany-500 text-white flex items-center justify-center font-bold text-xl shadow-md transform rotate-[-6deg]">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                        《針線大師》<span class="text-xs md:text-sm bg-warmpink-100 text-warmpink-600 px-2.5 py-0.5 rounded-full font-bold border border-warmpink-400/30">108課綱家政輔助教材</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Student Info Display (Active state) -->
+            <div id="header-user-badge" class="hidden flex items-center gap-3 bg-tiffany-50 px-3.5 py-1.5 rounded-full border border-tiffany-200 text-xs md:text-sm">
+                <span id="badge-info" class="font-bold text-tiffany-700">701 15號 張小明</span>
+                <span class="bg-sunyellow px-2 py-0.5 rounded-full text-amber-800 font-extrabold shadow-sm flex items-center gap-1">
+                    <i class="fa-solid fa-star text-amber-500"></i> <span id="badge-score">0</span>分
+                </span>
+            </div>
+
+            <!-- Audio Toggle -->
+            <button id="btn-toggle-sound" onclick="app.toggleSound()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Dynamic Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- SCREEN 1: LOGIN & WELCOME -->
+        <section id="screen-welcome" class="space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-10 card-shadow border-2 border-tiffany-100 relative overflow-hidden">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-10 -right-10 w-36 h-36 bg-tiffany-100 rounded-full opacity-50 blur-xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-warmpink-100 rounded-full opacity-50 blur-xl"></div>
+
+                <div class="text-center space-y-3 relative z-10">
+                    <div class="inline-flex items-center gap-2 bg-tiffany-50 text-tiffany-700 px-4 py-1.5 rounded-full font-bold text-sm border border-tiffany-200">
+                        <i class="fa-solid fa-graduation-cap"></i> 國中七年級 家政科「縫紉巧手」單元
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 font-playful tracking-wide">
+                        穿針打結特訓營
+                    </h2>
+                    <p class="text-slate-600 max-w-xl mx-auto text-sm md:text-base">
+                        歡迎來到針線大師訓練營！在動手縫紉之前，先透過 10~15 分鐘的趣味特訓關卡，精通徒手穿針、穿線器操作與起針/結束打結法吧！
+                    </p>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="mt-8 bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-200 max-w-md mx-auto space-y-4">
+                    <h3 class="font-bold text-slate-700 flex items-center gap-2 text-base">
+                        <i class="fa-solid fa-id-card text-tiffany-500"></i> 請輸入學員基本資料
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">班級 (如: 701)</label>
+                            <input type="text" id="input-class" placeholder="701" value="701" class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tiffany-500 text-sm font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">座號 (如: 05)</label>
+                            <input type="number" id="input-seat" placeholder="05" value="12" min="1" max="50" class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tiffany-500 text-sm font-semibold">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">學生姓名</label>
+                        <input type="text" id="input-name" placeholder="請輸入姓名" value="王大明" class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-tiffany-500 text-sm font-semibold">
+                    </div>
+                </div>
+
+                <!-- Mission Overview Cards -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-tiffany-50/70 p-4 rounded-2xl border border-tiffany-200 text-center space-y-1">
+                        <div class="w-10 h-10 rounded-full bg-tiffany-500 text-white font-black flex items-center justify-center mx-auto text-lg mb-2 shadow-sm">1</div>
+                        <h4 class="font-bold text-tiffany-700 text-sm">第一關：穿針術</h4>
+                        <p class="text-xs text-slate-600">徒手穿針訣竅 & 穿線器標準三步驟</p>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-center space-y-1">
+                        <div class="w-10 h-10 rounded-full bg-amber-400 text-amber-900 font-black flex items-center justify-center mx-auto text-lg mb-2 shadow-sm">2</div>
+                        <h4 class="font-bold text-amber-800 text-sm">第二關：起針術</h4>
+                        <p class="text-xs text-slate-600">開始打結法、0.5cm線尾與繞針訣竅</p>
+                    </div>
+                    <div class="bg-warmpink-50/80 p-4 rounded-2xl border border-warmpink-200 text-center space-y-1">
+                        <div class="w-10 h-10 rounded-full bg-warmpink-500 text-white font-black flex items-center justify-center mx-auto text-lg mb-2 shadow-sm">3</div>
+                        <h4 class="font-bold text-warmpink-700 text-sm">第三關：收尾術</h4>
+                        <p class="text-xs text-slate-600">結束打結法、翻背面與服貼不鬆脫</p>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <div class="mt-8 text-center">
+                    <button onclick="app.startQuiz()" class="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-tiffany-500 to-tiffany-600 hover:from-tiffany-600 hover:to-tiffany-700 text-white font-black text-lg rounded-2xl shadow-lg transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-3 mx-auto">
+                        <i class="fa-solid fa-play"></i> 開 始 特 訓 闖 關
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: QUIZ CHALLENGE (Level 1, 2, 3) -->
+        <section id="screen-quiz" class="hidden space-y-6">
+            <!-- Progress Stepper Header -->
+            <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span id="stage-badge" class="bg-tiffany-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        第一關：穿針術
+                    </span>
+                    <span id="question-indicator" class="text-xs text-slate-500 font-semibold">
+                        題目 1 / 3
+                    </span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-1/3 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar-inner" class="bg-tiffany-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Main Question Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-tiffany-100 relative min-h-[400px] flex flex-col justify-between">
+                
+                <div id="question-body" class="space-y-6">
+                    <!-- Dynamic Question Header -->
+                    <div>
+                        <span id="q-category" class="text-xs font-bold text-tiffany-600 bg-tiffany-50 px-2.5 py-1 rounded-lg border border-tiffany-200">
+                            觀念選擇題
+                        </span>
+                        <h3 id="q-title" class="text-xl md:text-2xl font-bold text-slate-800 mt-2">
+                            題目載入中...
+                        </h3>
+                    </div>
+
+                    <!-- Interactive Visual Illustration / Diagram Area -->
+                    <div id="q-diagram-container" class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-center flex justify-center items-center">
+                        <!-- Dynamic SVG or Illustration injected here -->
+                    </div>
+
+                    <!-- Answer Options / Drag-Sorting Interactive Container -->
+                    <div id="q-interactive-area" class="space-y-3">
+                        <!-- Options injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Instant Feedback Box -->
+                <div id="feedback-box" class="hidden mt-6 p-4 rounded-2xl border transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                        <div id="feedback-icon" class="text-2xl mt-0.5"></div>
+                        <div class="space-y-1">
+                            <h4 id="feedback-title" class="font-bold text-base"></h4>
+                            <p id="feedback-desc" class="text-xs md:text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation Buttons -->
+                <div class="mt-8 flex justify-end">
+                    <button id="btn-next" onclick="app.nextQuestion()" disabled class="px-8 py-3 bg-slate-300 text-white font-bold rounded-xl cursor-not-allowed transition-all duration-200 flex items-center gap-2">
+                        下一題 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: RESULT & CERTIFICATE -->
+        <section id="screen-result" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-10 card-shadow border-4 border-tiffany-300 relative certificate-container">
+                
+                <!-- Certificate Header -->
+                <div class="text-center space-y-2 border-b border-dashed border-tiffany-200 pb-6">
+                    <div class="inline-block bg-amber-100 text-amber-800 text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest mb-1">
+                        OFFICIAL CERTIFICATE
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 font-playful">
+                        《針線大師》特訓結業成績單
+                    </h2>
+                    <p class="text-xs text-slate-500">臺灣十二年國教 108 課綱家政科手縫基礎技能認證</p>
+                </div>
+
+                <!-- Student & Score Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-6 items-center">
+                    
+                    <!-- Student Info -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center md:text-left space-y-1">
+                        <span class="text-xs text-slate-400 font-bold">特訓學員</span>
+                        <div id="cert-student-name" class="text-xl font-black text-slate-800">張小明</div>
+                        <div id="cert-student-class" class="text-xs font-bold text-tiffany-600">701 班 15 號</div>
+                        <div id="cert-date" class="text-[10px] text-slate-400 mt-2">測驗時間：2026-09-23</div>
+                    </div>
+
+                    <!-- Big Badge Icon & Title -->
+                    <div class="text-center space-y-2">
+                        <div id="cert-badge-icon" class="w-24 h-24 mx-auto rounded-full bg-amber-100 border-4 border-amber-300 flex items-center justify-center text-5xl text-amber-500 shadow-lg pulse-gentle">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">獲得榮譽稱號</span>
+                            <div id="cert-title" class="text-2xl font-black text-tiffany-600 font-playful">
+                                穿針打結大師
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Score Box -->
+                    <div class="bg-tiffany-50/60 p-4 rounded-2xl border border-tiffany-200 text-center space-y-1">
+                        <span class="text-xs text-tiffany-700 font-bold">總測驗成績</span>
+                        <div class="text-4xl font-black text-tiffany-600 font-playful">
+                            <span id="cert-score">100</span> <span class="text-sm font-normal text-slate-500">分</span>
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            正確率：<span id="cert-accuracy" class="font-bold text-slate-700">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mistake Analysis & Review Section -->
+                <div class="mt-6 space-y-3">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2 border-l-4 border-tiffany-500 pl-2">
+                        <i class="fa-solid fa-clipboard-check text-tiffany-500"></i> 關卡解析與重點複習
+                    </h3>
+                    <div id="review-list" class="space-y-2 text-xs md:text-sm">
+                        <!-- Review items generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-center gap-4 no-print">
+                    <button onclick="app.restart()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> 重新挑戰特訓
+                    </button>
+                    <button onclick="window.print()" class="px-8 py-3 bg-gradient-to-r from-warmpink-500 to-warmpink-600 hover:from-warmpink-600 hover:to-warmpink-700 text-white font-bold rounded-xl shadow-md transform active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> 下載/列印成績單
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 no-print">
+        <p>《針線大師：穿針打結特訓營》 &copy; 國中綜合活動領域家政科 數位教學輔助工具</p>
+    </footer>
+
+    <!-- JavaScript Game Logic -->
+    <script>
+        // Audio Synthesizer for sound effects without external audio files
+        class SoundFX {
+            constructor() {
+                this.enabled = true;
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playCorrect() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+
+            playWrong() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        // Question Database according to Taiwan 108 Curriculum Home Economics guidelines
+        const QUESTION_DATABASE = [
+            // LEVEL 1: 穿針術
+            {
+                level: 1,
+                levelTitle: "第一關：穿針術",
+                type: "mcq",
+                category: "徒手穿針技巧",
+                title: "徒手穿針時，將縫線線頭剪成斜角並稍微沾水，主要的作用是什麼？",
+                diagram: `
+                    <svg class="w-48 h-32" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Needle -->
+                        <path d="M 30 60 L 160 58 A 3 3 0 0 0 160 62 L 30 60 Z" fill="#94A3B8"/>
+                        <ellipse cx="40" cy="60" rx="6" ry="2" fill="#334155"/>
+                        <!-- Thread entering -->
+                        <path d="M 10 90 Q 25 70 36 60" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-dasharray="4"/>
+                        <circle cx="36" cy="60" r="3" fill="#FF6B6B"/>
+                    </svg>
+                `,
+                options: [
+                    "使線頭纖維硬挺聚攏，更容易通過細小的針孔",
+                    "讓金屬針頭變軟，避免刺傷手指",
+                    "讓縫線長度自動伸長，方便縫韌",
+                    "防止手縫針生鏽並增加滑順度"
+                ],
+                correct: 0,
+                explanation: "將線頭剪斜角可減少前端橫向纖維，沾水或微濕可使分散的纖維聚攏變硬挺，這樣更能順利穿過細小的針孔喔！"
+            },
+            {
+                level: 1,
+                levelTitle: "第一關：穿針術",
+                type: "sorting",
+                category: "穿線器步驟排序",
+                title: "請點選選項，依序排列出使用「穿線器」穿針的正確三步驟：",
+                diagram: `
+                    <svg class="w-52 h-28" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Needle Threader Head (Aluminum coin shape) -->
+                        <path d="M 30 50 L 60 30 L 60 70 Z" fill="#CBD5E1" stroke="#64748B" stroke-width="2"/>
+                        <circle cx="45" cy="50" r="5" fill="#94A3B8"/>
+                        <!-- Steel Wire Loop -->
+                        <path d="M 60 50 Q 120 30 150 50 Q 120 70 60 50" fill="none" stroke="#64748B" stroke-width="2"/>
+                        <!-- Thread inside loop -->
+                        <path d="M 100 80 L 120 50 L 140 80" fill="none" stroke="#FF6B6B" stroke-width="3"/>
+                    </svg>
+                `,
+                items: [
+                    "① 將穿線器的鋼絲圈穿過「針孔」",
+                    "② 將縫線穿入鋼絲圈內（預留約 2~3 cm）",
+                    "③ 捏住穿線器將鋼絲連同縫線拉出針孔"
+                ],
+                correctOrder: [0, 1, 2], // Index sequence
+                explanation: "穿線器口訣：鋼絲過針孔 ➔ 線穿鋼絲 2~3cm ➔ 拉出穿線器！線頭預留 2~3cm 才能確保拉出時線不會脫落。"
+            },
+            {
+                level: 1,
+                levelTitle: "第一關：穿針術",
+                type: "mcq",
+                category: "穿線器操作規範",
+                title: "使用穿線器時，將縫線穿入鋼絲圈內時，線頭應該預留多少長度最合適？",
+                diagram: `
+                    <svg class="w-48 h-28" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 40 50 Q 100 20 140 50 Q 100 80 40 50" fill="none" stroke="#94A3B8" stroke-width="2"/>
+                        <path d="M 80 50 L 120 50" fill="none" stroke="#FF6B6B" stroke-width="4"/>
+                        <text x="85" y="42" font-size="12" font-weight="bold" fill="#E84A4A">2~3 cm ?</text>
+                    </svg>
+                `,
+                options: [
+                    "0.1 cm (越短越好)",
+                    "2 ~ 3 cm (剛剛好不易脫落且不浪費)",
+                    "15 cm (越長越好)",
+                    "完全不用預留，卡住即可"
+                ],
+                correct: 1,
+                explanation: "線頭穿入鋼絲圈預留 2~3 cm 最適當。太短拉出時線容易掉落，太長則會浪費縫線並容易纏繞打結。"
+            },
+
+            // LEVEL 2: 起針術 (開始打結法)
+            {
+                level: 2,
+                levelTitle: "第二關：起針術",
+                type: "mcq",
+                category: "起針結（開始打結法）",
+                title: "準備打「起針結（開始打結）」時，右手的針身應壓在線尾上方約多少距離處？",
+                diagram: `
+                    <svg class="w-52 h-28" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Thread end -->
+                        <path d="M 40 50 L 160 50" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Needle overlay -->
+                        <path d="M 70 20 L 70 80" stroke="#94A3B8" stroke-width="3"/>
+                        <circle cx="70" cy="25" r="2" fill="#334155"/>
+                        <!-- Length marker -->
+                        <line x1="40" y1="65" x2="70" y2="65" stroke="#36B5AC" stroke-width="2" marker-end="url(#arrow)"/>
+                        <text x="42" y="80" font-size="12" font-weight="bold" fill="#288E87">0.5 cm</text>
+                    </svg>
+                `,
+                options: [
+                    "距離線尾約 0.5 cm 處",
+                    "距離線尾約 10 cm 處",
+                    "完全貼齊最尖端的 0 cm 處",
+                    "壓在線的中段（約 20 cm 處）"
+                ],
+                correct: 0,
+                explanation: "起針打結時，將針壓在距離線尾 0.5 cm 處，能預留足夠的線尾支撐繞線，打出來的起針結才會整齊又堅固！"
+            },
+            {
+                level: 2,
+                levelTitle: "第二關：起針術",
+                type: "sorting",
+                category: "起針結四步驟",
+                title: "請排列「開始打結法（起針結）」的正確操作順序：",
+                diagram: `
+                    <svg class="w-52 h-28" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Hand pinching needle and thread loops -->
+                        <circle cx="110" cy="50" r="30" fill="#FFE1E1" stroke="#FF8888" stroke-width="2"/>
+                        <path d="M 90 50 Q 110 30 130 50 Q 110 70 90 50" fill="none" stroke="#FF6B6B" stroke-width="3"/>
+                        <text x="80" y="55" font-size="11" font-weight="bold" fill="#E84A4A">捏緊繞圈</text>
+                    </svg>
+                `,
+                items: [
+                    "① 針壓在距離線尾 0.5cm 處",
+                    "② 將縫線繞針尖 2~3 圈",
+                    "③ 左手食指與拇指捏緊繞好的線圈",
+                    "④ 右手將針線往前拉到底形成結頭"
+                ],
+                correctOrder: [0, 1, 2, 3],
+                explanation: "起針結關鍵在於「捏緊線圈」！若右手抽針時左手沒有捏緊繞好的線圈，線圈會散開無法形成結頭喔。"
+            },
+
+            // LEVEL 3: 收尾術 (結束打結法)
+            {
+                level: 3,
+                levelTitle: "第三關：收尾術",
+                type: "mcq",
+                category: "收尾結（結束打結法）",
+                title: "當作品縫製完畢要進行「結束打結法（收尾結）」時，第一步必須先做什麼？",
+                diagram: `
+                    <svg class="w-52 h-28" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Fabric flipped to back side -->
+                        <rect x="40" y="20" width="140" height="60" rx="8" fill="#E8F8F7" stroke="#36B5AC" stroke-width="2"/>
+                        <text x="85" y="55" font-size="14" font-weight="bold" fill="#288E87">布料背面</text>
+                    </svg>
+                `,
+                options: [
+                    "將布料翻到背面（隱藏線結維持正面美觀）",
+                    "直接在正面剪斷縫線",
+                    "用膠水塗在縫線上固定",
+                    "把針拔掉直接用手打死結"
+                ],
+                correct: 0,
+                explanation: "手縫作品的所有結束打結（收尾結）都必須在「布料背面」進行，這樣作品正面才不會看到突兀的線結喔！"
+            },
+            {
+                level: 3,
+                levelTitle: "第三關：收尾術",
+                type: "mcq",
+                category: "收尾結服貼關鍵",
+                title: "結束打結時，為什麼一定要將「針尖橫壓在布面的出線根部」？",
+                diagram: `
+                    <svg class="w-52 h-28" viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Fabric plane -->
+                        <line x1="20" y1="70" x2="200" y2="70" stroke="#64748B" stroke-width="4"/>
+                        <!-- Thread root -->
+                        <path d="M 110 70 L 110 30" stroke="#FF6B6B" stroke-width="3"/>
+                        <!-- Needle pressed against root -->
+                        <path d="M 60 70 L 160 70" stroke="#94A3B8" stroke-width="3"/>
+                        <circle cx="110" cy="70" r="4" fill="#E84A4A"/>
+                        <text x="60" y="50" font-size="11" font-weight="bold" fill="#36B5AC">針壓線根部 ➔ 結服貼</text>
+                    </svg>
+                `,
+                options: [
+                    "確保打出來的結能「緊貼布面」，防止縫線鬆脫",
+                    "防止針刺破布料",
+                    "讓縫線可以變粗",
+                    "可以省去繞線 2~3 圈的步驟"
+                ],
+                correct: 0,
+                explanation: "針壓在出線根部能引導線圈順著針身下滑至最底層，這樣形成的結才會「服貼不鬆脫」。若懸空打結，縫好的衣服容易開裂！"
+            }
+        ];
+
+        // Core Application State & Controller
+        class App {
+            constructor() {
+                this.sound = new SoundFX();
+                this.student = { class: '701', seat: '12', name: '王大明' };
+                this.currentQuestionIdx = 0;
+                this.score = 0;
+                this.userAnswers = []; // Store user responses for review
+                this.sortingState = []; // Current state for sorting questions
+            }
+
+            // Start Quiz Event
+            startQuiz() {
+                const cls = document.getElementById('input-class').value.trim();
+                const seat = document.getElementById('input-seat').value.trim();
+                const name = document.getElementById('input-name').value.trim();
+
+                if (!cls || !seat || !name) {
+                    alert('請完整填寫班級、座號與姓名喔！');
+                    return;
+                }
+
+                this.student = { class: cls, seat: seat, name: name };
+                this.sound.playClick();
+
+                // Update Header Badge
+                document.getElementById('badge-info').innerText = `${cls}班 ${seat}號 ${name}`;
+                document.getElementById('header-user-badge').classList.remove('hidden');
+
+                // Switch Screen
+                this.showScreen('screen-quiz');
+                this.loadQuestion(0);
+            }
+
+            // Screen Switcher
+            showScreen(screenId) {
+                document.getElementById('screen-welcome').classList.add('hidden');
+                document.getElementById('screen-quiz').classList.add('hidden');
+                document.getElementById('screen-result').classList.add('hidden');
+
+                document.getElementById(screenId).classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Load and Render Question
+            loadQuestion(idx) {
+                this.currentQuestionIdx = idx;
+                const q = QUESTION_DATABASE[idx];
+
+                // Update Progress Header
+                document.getElementById('stage-badge').innerText = q.levelTitle;
+                document.getElementById('question-indicator').innerText = `題目 ${idx + 1} / ${QUESTION_DATABASE.length}`;
+                
+                const progressPercent = ((idx) / QUESTION_DATABASE.length) * 100;
+                document.getElementById('progress-bar-inner').style.width = `${progressPercent}%`;
+
+                // Update Question Text
+                document.getElementById('q-category').innerText = q.category;
+                document.getElementById('q-title').innerText = q.title;
+                document.getElementById('q-diagram-container').innerHTML = q.diagram;
+
+                // Reset Feedback Box & Next Button
+                const feedbackBox = document.getElementById('feedback-box');
+                feedbackBox.classList.add('hidden');
+
+                const btnNext = document.getElementById('btn-next');
+                btnNext.disabled = true;
+                btnNext.className = "px-8 py-3 bg-slate-300 text-white font-bold rounded-xl cursor-not-allowed transition-all flex items-center gap-2";
+
+                // Render Options based on Question Type
+                const area = document.getElementById('q-interactive-area');
+                area.innerHTML = '';
+
+                if (q.type === 'mcq') {
+                    q.options.forEach((optText, optIdx) => {
+                        const btn = document.createElement('button');
+                        btn.className = "w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-tiffany-400 hover:bg-tiffany-50/50 font-semibold text-slate-700 transition-all flex items-center justify-between group";
+                        btn.onclick = () => this.handleMCQAnswer(optIdx);
+                        btn.innerHTML = `
+                            <span class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-tiffany-500 group-hover:text-white text-slate-600 font-bold flex items-center justify-center text-sm transition-colors">
+                                    ${String.fromCharCode(65 + optIdx)}
+                                </span>
+                                <span>${optText}</span>
+                            </span>
+                            <i class="fa-regular fa-circle text-slate-300 group-hover:text-tiffany-500 text-lg"></i>
+                        `;
+                        area.appendChild(btn);
+                    });
+                } else if (q.type === 'sorting') {
+                    // Sorting Question
+                    this.sortingState = [...q.items.map((item, id) => ({ text: item, originalIndex: id }))];
+                    // Shuffle slightly for challenge
+                    this.sortingState.sort(() => Math.random() - 0.5);
+
+                    this.renderSortingUI();
+                }
+            }
+
+            renderSortingUI() {
+                const q = QUESTION_DATABASE[this.currentQuestionIdx];
+                const area = document.getElementById('q-interactive-area');
+                area.innerHTML = `
+                    <p class="text-xs font-bold text-slate-500 mb-2">💡 請使用上下按鈕調整步驟順序，排列正確後點擊「確認排序」：</p>
+                `;
+
+                const listContainer = document.createElement('div');
+                listContainer.className = "space-y-2";
+
+                this.sortingState.forEach((item, pos) => {
+                    const row = document.createElement('div');
+                    row.className = "p-3 bg-white rounded-xl border-2 border-slate-200 flex items-center justify-between shadow-sm";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-full bg-amber-400 text-amber-900 font-black flex items-center justify-center text-xs">
+                                ${pos + 1}
+                            </span>
+                            <span class="font-bold text-slate-700 text-sm md:text-base">${item.text}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="app.moveSortingItem(${pos}, -1)" ${pos === 0 ? 'disabled class="opacity-30"' : ''} class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-tiffany-100 text-slate-600 flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button onclick="app.moveSortingItem(${pos}, 1)" ${pos === this.sortingState.length - 1 ? 'disabled class="opacity-30"' : ''} class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-tiffany-100 text-slate-600 flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </div>
+                    `;
+                    listContainer.appendChild(row);
+                });
+
+                area.appendChild(listContainer);
+
+                // Submit Sorting Button
+                const submitBtn = document.createElement('button');
+                submitBtn.onclick = () => this.handleSortingAnswer();
+                submitBtn.className = "mt-4 w-full py-3 bg-tiffany-500 hover:bg-tiffany-600 text-white font-bold rounded-xl shadow-md transition-all";
+                submitBtn.innerText = "完成步驟排序，送出檢查";
+                area.appendChild(submitBtn);
+            }
+
+            moveSortingItem(index, direction) {
+                this.sound.playClick();
+                const targetIndex = index + direction;
+                if (targetIndex < 0 || targetIndex >= this.sortingState.length) return;
+
+                const temp = this.sortingState[index];
+                this.sortingState[index] = this.sortingState[targetIndex];
+                this.sortingState[targetIndex] = temp;
+
+                this.renderSortingUI();
+            }
+
+            // Handle Multiple Choice Answer Selection
+            handleMCQAnswer(selectedIdx) {
+                const q = QUESTION_DATABASE[this.currentQuestionIdx];
+                const isCorrect = (selectedIdx === q.correct);
+
+                // Disable all option buttons
+                const buttons = document.querySelectorAll('#q-interactive-area button');
+                buttons.forEach((btn, idx) => {
+                    btn.disabled = true;
+                    btn.classList.remove('hover:border-tiffany-400', 'hover:bg-tiffany-50/50');
+                    if (idx === q.correct) {
+                        btn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold flex items-center justify-between";
+                    } else if (idx === selectedIdx && !isCorrect) {
+                        btn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-800 font-bold flex items-center justify-between";
+                    }
+                });
+
+                this.processAnswerResult(isCorrect, q.explanation);
+            }
+
+            // Handle Sorting Answer Submission
+            handleSortingAnswer() {
+                const q = QUESTION_DATABASE[this.currentQuestionIdx];
+                const currentOrder = this.sortingState.map(i => i.originalIndex);
+                const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(q.correctOrder);
+
+                this.processAnswerResult(isCorrect, q.explanation);
+            }
+
+            processAnswerResult(isCorrect, explanation) {
+                const q = QUESTION_DATABASE[this.currentQuestionIdx];
+
+                if (isCorrect) {
+                    this.sound.playCorrect();
+                    this.score += 20; // 5 questions total = 100 points
+                    document.getElementById('badge-score').innerText = this.score;
+                } else {
+                    this.sound.playWrong();
+                }
+
+                // Record answer state for score review card
+                this.userAnswers.push({
+                    question: q.title,
+                    category: q.category,
+                    isCorrect: isCorrect,
+                    explanation: explanation
+                });
+
+                // Show Feedback Box
+                const fbBox = document.getElementById('feedback-box');
+                const fbIcon = document.getElementById('feedback-icon');
+                const fbTitle = document.getElementById('feedback-title');
+                const fbDesc = document.getElementById('feedback-desc');
+
+                fbBox.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'text-emerald-800', 'bg-rose-50', 'border-rose-300', 'text-rose-800');
+
+                if (isCorrect) {
+                    fbBox.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-800');
+                    fbIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i>`;
+                    fbTitle.innerText = "太棒了！答對囉！🎉";
+                } else {
+                    fbBox.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-800');
+                    fbIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500"></i>`;
+                    fbTitle.innerText = "觀念還差一點點喔！💡";
+                }
+                fbDesc.innerText = explanation;
+
+                // Enable Next Button
+                const btnNext = document.getElementById('btn-next');
+                btnNext.disabled = false;
+                btnNext.className = "px-8 py-3 bg-tiffany-500 hover:bg-tiffany-600 text-white font-bold rounded-xl shadow-md transform active:scale-95 transition-all flex items-center gap-2 cursor-pointer";
+            }
+
+            nextQuestion() {
+                this.sound.playClick();
+                if (this.currentQuestionIdx + 1 < QUESTION_DATABASE.length) {
+                    this.loadQuestion(this.currentQuestionIdx + 1);
+                } else {
+                    this.finishQuiz();
+                }
+            }
+
+            finishQuiz() {
+                this.showScreen('screen-result');
+
+                // Fill Student Data
+                document.getElementById('cert-student-name').innerText = this.student.name;
+                document.getElementById('cert-student-class').innerText = `${this.student.class} 班 ${this.student.seat} 號`;
+                
+                const now = new Date();
+                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                document.getElementById('cert-date').innerText = `測驗日期：${dateStr}`;
+
+                // Calculate Score & Accuracy
+                document.getElementById('cert-score').innerText = this.score;
+                const accuracy = Math.round((this.score / (QUESTION_DATABASE.length * 20)) * 100);
+                document.getElementById('cert-accuracy').innerText = `${accuracy}%`;
+
+                // Calculate Badge Title based on specs
+                const badgeIcon = document.getElementById('cert-badge-icon');
+                const certTitle = document.getElementById('cert-title');
+
+                if (this.score >= 90) {
+                    certTitle.innerText = "穿針打結大師 🏆";
+                    certTitle.className = "text-2xl font-black text-amber-500 font-playful";
+                    badgeIcon.className = "w-24 h-24 mx-auto rounded-full bg-amber-100 border-4 border-amber-400 flex items-center justify-center text-5xl text-amber-500 shadow-lg pulse-gentle";
+                    badgeIcon.innerHTML = `<i class="fa-solid fa-crown"></i>`;
+                    
+                    // Trigger Confetti Celebration for high score
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                } else if (this.score >= 70) {
+                    certTitle.innerText = "巧手修練生 🌟";
+                    certTitle.className = "text-2xl font-black text-tiffany-600 font-playful";
+                    badgeIcon.className = "w-24 h-24 mx-auto rounded-full bg-tiffany-100 border-4 border-tiffany-400 flex items-center justify-center text-5xl text-tiffany-600 shadow-lg";
+                    badgeIcon.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i>`;
+                } else {
+                    certTitle.innerText = "手縫初學者 🧵";
+                    certTitle.className = "text-2xl font-black text-warmpink-600 font-playful";
+                    badgeIcon.className = "w-24 h-24 mx-auto rounded-full bg-warmpink-100 border-4 border-warmpink-300 flex items-center justify-center text-5xl text-warmpink-500 shadow-lg";
+                    badgeIcon.innerHTML = `<i class="fa-solid fa-seedling"></i>`;
+                }
+
+                // Render Review List
+                const reviewContainer = document.getElementById('review-list');
+                reviewContainer.innerHTML = '';
+
+                this.userAnswers.forEach((ans, i) => {
+                    const item = document.createElement('div');
+                    item.className = `p-3 rounded-xl border flex items-start gap-3 ${ans.isCorrect ? 'bg-slate-50 border-slate-200' : 'bg-rose-50/70 border-rose-200'}`;
+                    item.innerHTML = `
+                        <div class="mt-0.5 ${ans.isCorrect ? 'text-emerald-500' : 'text-rose-500'} font-bold">
+                            <i class="fa-solid ${ans.isCorrect ? 'fa-check-circle' : 'fa-triangle-exclamation'} text-base"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <div class="font-bold text-slate-800 text-xs md:text-sm">
+                                [${ans.category}] ${ans.question}
+                            </div>
+                            <div class="text-xs text-slate-600 leading-relaxed">
+                                Key: ${ans.explanation}
+                            </div>
+                        </div>
+                    `;
+                    reviewContainer.appendChild(item);
+                });
+            }
+
+            restart() {
+                this.sound.playClick();
+                this.score = 0;
+                this.currentQuestionIdx = 0;
+                this.userAnswers = [];
+                document.getElementById('badge-score').innerText = '0';
+                this.showScreen('screen-welcome');
+            }
+
+            toggleSound() {
+                this.sound.enabled = !this.sound.enabled;
+                const icon = document.getElementById('sound-icon');
+                if (this.sound.enabled) {
+                    icon.className = "fa-solid fa-volume-high";
+                    this.sound.playClick();
+                } else {
+                    icon.className = "fa-solid fa-volume-xmark text-slate-400";
+                }
+            }
+        }
+
+        // Instantiate Global App
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new App();
+        });
+    </script>
+</body>
+</html>
